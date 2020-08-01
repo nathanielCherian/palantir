@@ -21,11 +21,10 @@ def dates(start, end):
         yield start + timedelta(n)
 
 
-
-url2_1 = r'https://bitcoincharts.com/charts/chart.json?m=krakenUSD&SubmitButton=Draw&r=5&i=15-min&c=1&s='
+url2_1 = r'https://bitcoincharts.com/charts/chart.json?m=krakenUSD&SubmitButton=Draw&r=5&i=5-min&c=1&s='
 url2_2 = r'&Prev=&Next=&t=S&b=&a1=&m1=10&a2=&m2=25&x=0&i1=&i2=&i3=&i4=&v=1&cv=0&ps=0&l=0&p=0&'
 
-for d in dates(date(2020, 7, 27), date(2020, 7, 30)):
+for d in dates(date(2020, 7, 20), date(2020, 7, 30)):
 
     date = d.strftime("%Y-%m-%d")
 
@@ -38,9 +37,9 @@ for d in dates(date(2020, 7, 27), date(2020, 7, 30)):
 
     headers = ['Timestamp', 'Open', 'High', 'Low', 'Close', 'Volume(BTC)', 'Volume(Currency)', 'WeightedPrice']
 
-    with open(f'datasets/bitcoin-15/{date}.csv', mode='w', newline='') as data_file:
+    with open(f'datasets/bitcoin-5/{date}.csv', mode='w', newline='') as data_file:
         writer = csv.writer(data_file)
         writer.writerow(headers)
         writer.writerows(data)
 
-    time.sleep(2)
+    time.sleep(10)
