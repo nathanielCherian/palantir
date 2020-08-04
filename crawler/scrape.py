@@ -24,7 +24,7 @@ def dates(start, end):
 url2_1 = r'https://bitcoincharts.com/charts/chart.json?m=krakenUSD&SubmitButton=Draw&r=5&i=5-min&c=1&s='
 url2_2 = r'&Prev=&Next=&t=S&b=&a1=&m1=10&a2=&m2=25&x=0&i1=&i2=&i3=&i4=&v=1&cv=0&ps=0&l=0&p=0&'
 
-for d in dates(date(2020, 7, 20), date(2020, 7, 30)):
+for d in dates(date(2020, 6, 1), date(2020, 7, 21)):
 
     date = d.strftime("%Y-%m-%d")
 
@@ -42,4 +42,4 @@ for d in dates(date(2020, 7, 20), date(2020, 7, 30)):
         writer.writerow(headers)
         writer.writerows(data)
 
-    time.sleep(10)
+    time.sleep(30)
