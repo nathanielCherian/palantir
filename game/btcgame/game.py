@@ -37,7 +37,7 @@ class Game():
                 cash_ = 0
             
             elif sold_btc + bitcoin_ < 0:
-                
+
                 info.update({'Capped':f"{(abs(sold_btc-bitcoin_))}BTC"})
 
                 cash_ += bitcoin_ * d[0]
@@ -56,12 +56,53 @@ class Game():
 
 
 
+    def multi_play(self, n=5):
+
+        histories = []
+        for i in range(5):
+
+            histories.append(self.play())
+        
+        self.histories = histories
+
+        return histories
+
         
 
 
 class Predictor():
 
+    
+    def __init__(self, **kwargs):
+        self.preceding = kwargs.get('preceding', 0)
+        self.history = []
+
+
+    def get_past(self):
+
+        if len(self.history) >= self.preceding:
+
+            return self.history[-self.preceding:]
+
+        else:
+            return False
+
+
     def predict(self, data):
+
+        pasts = self.get_past()
+        self.history.append(data)
+
+        if pasts:
+            return self.predict_engine(pasts, data)
+
+        else:
+            return (0,0)
+
+        
+
+    def predict_engine(self, pasts, data):
+        
 
         """
 
