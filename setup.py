@@ -28,5 +28,7 @@ setuptools.setup(
     license='MIT',
     python_requires='>=3.6',
     install_requires= get_requirements(),
-
+    entry_points = {
+        'console_scripts': ['palantir=bin.palantir:main'],
+    }
 )
