@@ -3,9 +3,9 @@ from finta import TA
 from .params import *
 import pandas as pd
 
-def preprocess(X: pd.DataFrame, cat=True):
+def preprocess(X: pd.DataFrame, validation=False):
     
-    if list(X.columns) != HEADERS:
+    if validation and list(X.columns) != HEADERS:
         raise NameError("Headers do not match!")
 
     data = pd.DataFrame()

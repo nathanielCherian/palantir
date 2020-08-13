@@ -24,6 +24,13 @@ def create_models(rawdata: pd.DataFrame, evaluate=True, verbose=0):
             print(model['name'] + ': ', clf.score(X, y))
 
 
+def load_models(model_names=[model['name']+'.pkl' for model in MODELS]):
+    clfs = []
+    for name in model_names:
+        clfs.append(joblib.load(os.path.join(MODELS_PATH, name)))
+
+    return clfs
+
 
 def predict(rawdata: pd.DataFrame, clfs=None):
 

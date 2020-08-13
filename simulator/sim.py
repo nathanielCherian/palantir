@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-class Simulator():
+class Simulator:
 
     history = pd.DataFrame(columns=['Price', 'Action', 'Trade', 'Cash($)', 'Holding(BTC)', 'Capital($)', 'Capped'])
 
@@ -21,15 +21,16 @@ class Simulator():
         cash_ = self.cash
 
 
-        for d in np.array(self.data):
+        for time, d in enumerate(np.array(self.data)):
 
             info = {}
 
-            prediction = self.predictor.predict(d)
+            prediction = self.predictor.predict(d, time)
 
             spent_cash = d[0] * prediction[0] * prediction[1] * -1
             sold_btc = prediction[0]*prediction[1]
             
+
 
             if spent_cash + cash_ < 0:
 
@@ -72,12 +73,13 @@ class Simulator():
         
 
 
-class Predictor():
+class Predictor:
 
     
     def __init__(self, **kwargs):
         self.preceding = kwargs.get('preceding', 0)
         self.history = []
+        self.time = kwargs.get('time', 0)
 
 
     def get_past(self):
@@ -90,20 +92,20 @@ class Predictor():
             return False
 
 
-    def predict(self, data):
+    def predict(self, data, time):
 
-        pasts = self.get_past()
         self.history.append(data)
+        raw_data = self.get_past()
 
-        if pasts:
-            return self.predict_engine(pasts, data)
+        if raw_data:
+            return self.predict_engine(raw_data, time)
 
         else:
             return (0,0)
 
         
 
-    def predict_engine(self, pasts, data):
+    def predict_engine(self, data, time):
         
 
         """
