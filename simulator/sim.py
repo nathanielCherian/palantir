@@ -1,3 +1,4 @@
+from collections import namedtuple
 import numpy as np
 import pandas as pd
 
@@ -20,12 +21,13 @@ class Simulator:
         bitcoin_ = self.bitcoin
         cash_ = self.cash
 
+        assets = namedtuple('assets', "bitcoin cash")
 
         for time, d in enumerate(np.array(self.data)):
 
             info = {}
 
-            prediction = self.predictor.predict(d, time)
+            prediction = self.predictor.predict(d, time, assets(bitcoin=bitcoin_, cash=cash_))
 
             spent_cash = d[0] * prediction[0] * prediction[1] * -1
             sold_btc = prediction[0]*prediction[1]
@@ -92,20 +94,20 @@ class Predictor:
             return False
 
 
-    def predict(self, data, time):
+    def predict(self, data, time, assets):
 
         self.history.append(data)
         raw_data = self.get_past()
 
         if raw_data:
-            return self.predict_engine(raw_data, time)
+            return self.predict_engine(raw_data, time, assets)
 
         else:
             return (0,0)
 
         
 
-    def predict_engine(self, data, time):
+    def predict_engine(self, data, time, assets):
         
 
         """

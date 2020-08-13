@@ -1,6 +1,6 @@
+from sklearn.model_selection import train_test_split
 from pathlib import Path
 from . import preprocess
-from sklearn.model_selection import train_test_split
 from .params import *
 import pandas as pd
 import joblib

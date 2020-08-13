@@ -29,6 +29,7 @@ MODELS = [
     }
 ]
 
+
 MINIMUM_DATA = 200
 
 HEADERS = ['Timestamp', 'Open', 'High', 'Low', 'Close', 'Volume(BTC)', 'Volume(Currency)', 'WeightedPrice']
