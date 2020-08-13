@@ -1,11 +1,11 @@
 import setuptools
 
 setuptools.setup(
-    name="btc-game",
+    name="btc-sim",
     version="0.0.1",
     author="Nathaniel Cherian",
     author_email="nathaniel@sylica.com",
-    description="bitcoin game",
+    description="bitcoin simulator",
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     classifiers=[

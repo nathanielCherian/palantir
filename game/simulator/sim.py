@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 
-class Game():
+
+class Simulator():
 
     history = pd.DataFrame(columns=['Price', 'Action', 'Trade', 'Cash($)', 'Holding(BTC)', 'Capital($)', 'Capped'])
 
@@ -11,6 +12,7 @@ class Game():
         self.predictor = predictor
         self.bitcoin = kwargs.get('bitcoin', 1)
         self.cash = kwargs.get('cash', 200)
+        self.relative = kwargs.get('relative', True) #bitcoin trades are % of total rather than numerical amount
 
 
     def play(self):
