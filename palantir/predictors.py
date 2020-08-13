@@ -6,6 +6,7 @@ import pandas as pd
 import joblib
 import os
 
+
 def create_models(rawdata: pd.DataFrame, evaluate=True, verbose=0):
 
     Path(MODELS_PATH).mkdir(parents=True, exist_ok=True)
@@ -13,18 +14,18 @@ def create_models(rawdata: pd.DataFrame, evaluate=True, verbose=0):
     X, y_collection = preprocess(rawdata)
 
     for model in MODELS:
-        clf = model['model'](**model['params'])
+        clf = model["model"](**model["params"])
 
-        y = getattr(y_collection, model['type'])
+        y = getattr(y_collection, model["type"])
         clf = clf.fit(X, y)
 
         joblib.dump(clf, os.path.join(MODELS_PATH, f'{model["name"]}.pkl'))
 
         if verbose > 0:
-            print(model['name'] + ': ', clf.score(X, y))
+            print(model["name"] + ": ", clf.score(X, y))
 
 
-def load_models(model_names=[model['name']+'.pkl' for model in MODELS]):
+def load_models(model_names=[model["name"] + ".pkl" for model in MODELS]):
     clfs = []
     for name in model_names:
         clfs.append(joblib.load(os.path.join(MODELS_PATH, name)))
@@ -37,24 +38,15 @@ def predict(rawdata: pd.DataFrame, clfs=None):
     if len(rawdata) < MINIMUM_DATA:
         raise Exception(f"Minimum data requirement of {MINIMUM_DATA} not met!")
 
-    
     X = preprocess(rawdata)[0]
-
 
     if not clfs:
         clfs = []
-        for name in [model['name']+'.pkl' for model in MODELS]:
+        for name in [model["name"] + ".pkl" for model in MODELS]:
             clfs.append(joblib.load(os.path.join(MODELS_PATH, name)))
-
 
     predictions = []
     for clf in clfs:
-        predictions.append(getattr(clf, 'predict')(X[-1:])[0])
+        predictions.append(getattr(clf, "predict")(X[-1:])[0])
 
     return predictions
-
-
-
-
-
-
