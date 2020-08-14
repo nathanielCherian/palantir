@@ -24,6 +24,3 @@ def clean(path):
 
 
     print("Done!")
-
-    
-clean('datasets/bitcoin-5')
