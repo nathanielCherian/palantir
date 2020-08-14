@@ -23,6 +23,7 @@ class Simulator:
         self.predictor = predictor
         self.bitcoin = kwargs.get("bitcoin", 1)
         self.cash = kwargs.get("cash", 200)
+        self.fee = kwargs.get('fee', 0)
         self.relative = kwargs.get(
             "relative", True
         )  # bitcoin trades are % of total rather than numerical amount
@@ -34,6 +35,7 @@ class Simulator:
 
         assets = namedtuple("assets", "bitcoin cash")
 
+
         for time, d in enumerate(np.array(self.data)):
 
             info = {}
@@ -42,27 +44,27 @@ class Simulator:
                 d, time, assets(bitcoin=bitcoin_, cash=cash_)
             )
 
-            spent_cash = d[0] * prediction[0] * prediction[1] * -1
-            sold_btc = prediction[0] * prediction[1]
 
-            if spent_cash + cash_ < 0:
+            actions = {
+                -1:lambda amount: min(amount, bitcoin_),
+                0: lambda amount: 0 ,
+                1: lambda amount: min(amount, cash_/d[0])
+            }
 
-                info.update({"Capped": f"{(abs(spent_cash-cash_))}$"})
 
-                bitcoin_ += cash_ / d[0]
-                cash_ = 0
 
-            elif sold_btc + bitcoin_ < 0:
+            traded_btc = actions[prediction[0]](prediction[1])
 
-                info.update({"Capped": f"{(abs(sold_btc-bitcoin_))}BTC"})
+            info.update({"Capped": prediction[1]-traded_btc})
 
-                cash_ += bitcoin_ * d[0]
-                bitcoin_ = 0
+            
+            bitcoin_ += traded_btc * prediction[0]
+            cash_ += traded_btc * prediction[0] * -1 * d[0]
 
-            else:
-                cash_ += spent_cash
-                bitcoin_ += prediction[0] * prediction[1]
-                info.update({"Capped": 0})
+            if prediction[0] is -1:
+                cash_ -= traded_btc * self.fee * d[0]
+            elif prediction[0] is 1:
+                bitcoin_ -= traded_btc * self.fee
 
             info.update(
                 {
@@ -74,6 +76,7 @@ class Simulator:
                     "Capital($)": (cash_ + d[0] * bitcoin_),
                 }
             )
+
             self.history = self.history.append(info, ignore_index=True)
 
         return self.history
