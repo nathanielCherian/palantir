@@ -13,9 +13,9 @@ def simple_agg(predictions):
         return 1
 
 
-def smart_agg(predictions):
+def smart_agg(predictions, cap):
 
-    if abs(predictions[1]) > TRADING_FEE:
+    if abs(predictions[1]) > cap:
         
         if predictions[0] == 1:
 
