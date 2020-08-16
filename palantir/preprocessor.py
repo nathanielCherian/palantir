@@ -13,7 +13,7 @@ def preprocess(X: pd.DataFrame, validation=False, diff=PREDICTION_WINDOW_PERIOD)
     data["Change"] = X["Close"].diff(periods=diff)
 
 
-    data = data.rename({'Open':'open', 'High':'high', 'Low':'low', 'Close':'close'}) #until finta gets updated
+    X = X.rename({'Open':'open', 'High':'high', 'Low':'low', 'Close':'close'}) #until finta gets updated
 
     periods = [10, 50, 100, 200]
     for period in periods:
