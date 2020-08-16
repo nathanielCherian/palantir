@@ -12,6 +12,7 @@ for filename in os.listdir(os.path.join(rootdir(), 'data')):
     data = pd.concat([data, pd.read_csv(os.path.join(rootdir(), 'data', filename), index_col=False)])
 
 
+
 def test_preprocess():
 
     X, y = palantir.preprocess(data)
