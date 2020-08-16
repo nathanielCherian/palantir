@@ -32,13 +32,13 @@ def initialize():
 
 
 
-def backtest():
+def backtest(fee=palantir.TRADING_FEE, cash=500):
     print("backtesting models through palantir-simulation...\n")
 
     clfs = palantir.load_models()
     sim = Simulator(palantir.load_data('dataset-btc-hourly')[:300].astype(float).drop(['Timestamp'], axis=1), 
-                    BacktestPredictor(preceding=200, time=199, clfs=clfs), 
-                    cash=500, fee=0.001)
+                    BacktestPredictor(preceding=palantir.MINIMUM_DATA, time=palantir.MINIMUM_DATA-1, clfs=clfs), 
+                    cash=cash, fee=fee)
     print('\n\n', sim.play(), '\n')
 
     Path(palantir.COMPLETED_SIMULATIONS_PATH).mkdir(parents=True, exist_ok=True)
@@ -75,7 +75,7 @@ def main():
 
     if args.get_btc:
         print("collecting files...")
-        #rawler.get_btc('dataset-btc-hourly', date.today()-timedelta(days=100), date.today(), period='Hourly', delay=0.001)
+        crawler.get_btc('dataset-btc-hourly', date.today()-timedelta(days=100), date.today(), period='Hourly', delay=0.001)
 
     elif args.backtest:
         backtest()
