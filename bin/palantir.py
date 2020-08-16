@@ -1,6 +1,7 @@
 import os, sys, json, shutil
 import argparse
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+from pathlib import Path
 
 import crawler
 import palantir
@@ -23,34 +24,44 @@ def structure_check():
 
     print('Palantir structure exists. Moving on...')
 
+
 def initialize():
     print('Creating and training models...')
     raw_data = palantir.load_data('dataset-btc-hourly')
     palantir.create_models(raw_data, verbose=1)
 
 
+
 def backtest():
-    print("backtesting models through palantir-simulation...")
+    print("backtesting models through palantir-simulation...\n")
 
     clfs = palantir.load_models()
-    sim = Simulator(palantir.load_data('datasets').astype(float).drop(['Timestamp'], axis=1), 
+    sim = Simulator(palantir.load_data('dataset-btc-hourly')[:300].astype(float).drop(['Timestamp'], axis=1), 
                     BacktestPredictor(preceding=200, time=199, clfs=clfs), 
-                    cash=500, fee=0.0026)
-    sim.play()
+                    cash=500, fee=0.001)
+    print('\n\n', sim.play(), '\n')
+
+    Path(palantir.COMPLETED_SIMULATIONS_PATH).mkdir(parents=True, exist_ok=True)
+
+    sim_file = os.path.join(palantir.COMPLETED_SIMULATIONS_PATH, datetime.now().strftime("%d-%H-%M-%S")+'.csv')
+    sim.history.to_csv(sim_file)
+    print(f"Simulation results saved to '{sim_file}'.\n")
+
+    
+
+
 
 def parse_args():
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', '-v', action='version',
                         version=f"palantir {VERSION}")
 
     help = "Download historical data for bitcoin"
-    parser.add_argument('get-btc', help=help)
+    parser.add_argument('--get-btc', help=help, action="store_true")
 
-    if len(sys.argv)==1:
-        structure_check()
-        initialize()
-        backtest()
-        sys.exit(0)
+    help = "Test models on built-in simulator"
+    parser.add_argument('--backtest', help=help, action="store_true")
 
     args = parser.parse_args()
 
@@ -61,9 +72,15 @@ def main():
 
     args = parse_args()
 
-    if 'get-btc' in args:
+
+    if args.get_btc:
         print("collecting files...")
-        crawler.get_btc('dataset-btc-hourly', date.today()-timedelta(days=100), date.today(), period='Hourly', delay=0.001)
+        #rawler.get_btc('dataset-btc-hourly', date.today()-timedelta(days=100), date.today(), period='Hourly', delay=0.001)
+
+    elif args.backtest:
+        backtest()
+
+    
 
 
     print(args)

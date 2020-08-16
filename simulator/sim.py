@@ -2,6 +2,26 @@ from collections import namedtuple
 import numpy as np
 import pandas as pd
 
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
 
 class Simulator:
 
@@ -28,13 +48,14 @@ class Simulator:
             "relative", True
         )  # bitcoin trades are % of total rather than numerical amount
 
-    def play(self):
+    def play(self, verbose=1):
 
         bitcoin_ = self.bitcoin
         cash_ = self.cash
 
         assets = namedtuple("assets", "bitcoin cash")
 
+        data_length = len(self.data) # for speed
 
         for time, d in enumerate(np.array(self.data)):
 
@@ -78,6 +99,8 @@ class Simulator:
             )
 
             self.history = self.history.append(info, ignore_index=True)
+            
+            printProgressBar(time+1, data_length, prefix='progress:', suffix='complete')
 
         return self.history
 

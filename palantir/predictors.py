@@ -33,7 +33,7 @@ def create_models(rawdata: pd.DataFrame, evaluate=True, verbose=0):
 def load_models(clf_names=[(model["name"] + ".pkl", model['predictor']) for model in MODELS]):
     clfs = []
     for (name, predictor) in clf_names:
-        clfs.append(joblib.load(os.path.join(MODELS_PATH, name)), predictor)
+        clfs.append((joblib.load(os.path.join(MODELS_PATH, name)), predictor))
 
     return clfs
 

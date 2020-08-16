@@ -1,6 +1,8 @@
 from .sim import Simulator, Predictor
 from palantir.predictors import predict
+from palantir.params import HEADERS
 import numpy as np
+import pandas as pd
 
 
 class BacktestPredictor(Predictor):
@@ -12,7 +14,7 @@ class BacktestPredictor(Predictor):
     def predict_engine(self, data, time, assets):
 
         
-        complete_data = pd.DataFrame(data, columns=params.HEADERS[1:])
+        complete_data = pd.DataFrame(data, columns=HEADERS[1:])
         
         prediction = predict(complete_data, self.clfs)
         
