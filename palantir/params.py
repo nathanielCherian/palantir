@@ -13,14 +13,14 @@ MODELS = [
         "name": "rfclf",
         "model": RandomForestClassifier,
         "type": "classifier",
-        "predictior": "predict_proba",
+        "predictor": "predict_proba",
         "params": {"n_estimators": 100},
     },
     {
         "name": "linreg",
         "model": LinearRegression,
         "type": "regressor",
-        "predictior": "predict",
+        "predictor": "predict",
         "params": {},
     },
 ]
@@ -39,7 +39,7 @@ HEADERS = [
     "WeightedPrice",
 ]
 
-PREDICTION_WINDOW_PERIOD = 12
+PREDICTION_WINDOW_PERIOD = 10
 
 
 TRADING_FEE = 0.0026

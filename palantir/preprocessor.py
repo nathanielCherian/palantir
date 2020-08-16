@@ -4,13 +4,13 @@ from .params import *
 import pandas as pd
 
 
-def preprocess(X: pd.DataFrame, validation=False):
+def preprocess(X: pd.DataFrame, validation=False, diff=PREDICTION_WINDOW_PERIOD):
 
     if validation and list(X.columns) != HEADERS:
         raise NameError("Headers do not match!")
 
     data = pd.DataFrame()
-    data["Change"] = X["Close"].diff(periods=PREDICTION_WINDOW_PERIOD)
+    data["Change"] = X["Close"].diff(periods=diff)
 
     periods = [10, 50, 100, 200]
     for period in periods:

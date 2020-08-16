@@ -13,6 +13,7 @@ def create_models(rawdata: pd.DataFrame, evaluate=True, verbose=0):
 
     X, y_collection = preprocess(rawdata)
 
+    clfs = []
     for model in MODELS:
         clf = model["model"](**model["params"])
 
@@ -21,14 +22,18 @@ def create_models(rawdata: pd.DataFrame, evaluate=True, verbose=0):
 
         joblib.dump(clf, os.path.join(MODELS_PATH, f'{model["name"]}.pkl'))
 
+        clfs.append((clf, model['predictor']))
+
         if verbose > 0:
             print(model["name"] + ": ", clf.score(X, y))
 
+    return clfs
 
-def load_models(model_names=[model["name"] + ".pkl" for model in MODELS]):
+
+def load_models(clf_names=[(model["name"] + ".pkl", model['predictor']) for model in MODELS]):
     clfs = []
-    for name in model_names:
-        clfs.append(joblib.load(os.path.join(MODELS_PATH, name)))
+    for (name, predictor) in model_names:
+        clfs.append(joblib.load(os.path.join(MODELS_PATH, name)), predictor)
 
     return clfs
 
@@ -41,12 +46,11 @@ def predict(rawdata: pd.DataFrame, clfs=None):
     X = preprocess(rawdata)[0]
 
     if not clfs:
-        clfs = []
-        for name in [model["name"] + ".pkl" for model in MODELS]:
-            clfs.append(joblib.load(os.path.join(MODELS_PATH, name)))
+        raise NotImplementedError
+
 
     predictions = []
-    for clf in clfs:
-        predictions.append(getattr(clf, "predict")(X[-1:])[0])
+    for (clf, predictor) in clfs:
+        predictions.append(getattr(clf, predictor)(X[-1:])[0])
 
     return predictions
