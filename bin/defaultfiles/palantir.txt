@@ -1,1 +1,16 @@
-THE PALANTIR PROJECT
+
+ /$$$$$$$           /$$                       /$$     /$$          
+| $$__  $$         | $$                      | $$    |__/          
+| $$  \ $$ /$$$$$$ | $$  /$$$$$$  /$$$$$$$  /$$$$$$   /$$  /$$$$$$ 
+| $$$$$$$/|____  $$| $$ |____  $$| $$__  $$|_  $$_/  | $$ /$$__  $$
+| $$____/  /$$$$$$$| $$  /$$$$$$$| $$  \ $$  | $$    | $$| $$  \__/
+| $$      /$$__  $$| $$ /$$__  $$| $$  | $$  | $$ /$$| $$| $$      
+| $$     |  $$$$$$$| $$|  $$$$$$$| $$  | $$  |  $$$$/| $$| $$      
+|__/      \_______/|__/ \_______/|__/  |__/   \___/  |__/|__/      
+                                                                   
+                                                                   
+The Palantir Project by Nathaniel Cherian
+
+https://github.com/nathanielCherian/palantir
+
+This file marks this directory as a palantir instance. Do not delete!

@@ -2,7 +2,17 @@ from collections import namedtuple
 import numpy as np
 import pandas as pd
 
-def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+
+def printProgressBar(
+    iteration,
+    total,
+    prefix="",
+    suffix="",
+    decimals=1,
+    length=100,
+    fill="█",
+    printEnd="\r",
+):
     """
     Call in a loop to create terminal progress bar
     @params:
@@ -17,11 +27,12 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     """
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    bar = fill * filledLength + "-" * (length - filledLength)
+    print(f"\r{prefix} |{bar}| {percent}% {suffix}", end=printEnd)
     # Print New Line on Complete
-    if iteration == total: 
+    if iteration == total:
         print()
+
 
 class Simulator:
 
@@ -43,7 +54,7 @@ class Simulator:
         self.predictor = predictor
         self.bitcoin = kwargs.get("bitcoin", 1)
         self.cash = kwargs.get("cash", 200)
-        self.fee = kwargs.get('fee', 0)
+        self.fee = kwargs.get("fee", 0)
         self.relative = kwargs.get(
             "relative", True
         )  # bitcoin trades are % of total rather than numerical amount
@@ -55,7 +66,7 @@ class Simulator:
 
         assets = namedtuple("assets", "bitcoin cash")
 
-        data_length = len(self.data) # for speed
+        data_length = len(self.data)  # for speed
 
         for time, d in enumerate(np.array(self.data)):
 
@@ -65,20 +76,16 @@ class Simulator:
                 d, time, assets(bitcoin=bitcoin_, cash=cash_)
             )
 
-
             actions = {
-                -1:lambda amount: min(amount, bitcoin_),
-                0: lambda amount: 0 ,
-                1: lambda amount: min(amount, cash_/d[0])
+                -1: lambda amount: min(amount, bitcoin_),
+                0: lambda amount: 0,
+                1: lambda amount: min(amount, cash_ / d[0]),
             }
-
-
 
             traded_btc = actions[prediction[0]](prediction[1])
 
-            info.update({"Capped": prediction[1]-traded_btc})
+            info.update({"Capped": prediction[1] - traded_btc})
 
-            
             bitcoin_ += traded_btc * prediction[0]
             cash_ += traded_btc * prediction[0] * -1 * d[0]
 
@@ -99,8 +106,10 @@ class Simulator:
             )
 
             self.history = self.history.append(info, ignore_index=True)
-            
-            printProgressBar(time+1, data_length, prefix='progress:', suffix='complete')
+
+            printProgressBar(
+                time + 1, data_length, prefix="progress:", suffix="complete"
+            )
 
         return self.history
 

@@ -12,10 +12,11 @@ def preprocess(X: pd.DataFrame, validation=False, diff=PREDICTION_WINDOW_PERIOD)
     data = pd.DataFrame()
     data["Change"] = X["Close"].diff(periods=diff)
 
+    X = X.rename(
+        columns={"Open": "open", "High": "high", "Low": "low", "Close": "close"}
+    )  # until finta gets updated
 
-    X = X.rename(columns={'Open':'open', 'High':'high', 'Low':'low', 'Close':'close'}) #until finta gets updated
-
-    assert X['close'].any()
+    assert X["close"].any()
 
     periods = [10, 50, 100, 200]
     for period in periods:
@@ -31,8 +32,9 @@ def preprocess(X: pd.DataFrame, validation=False, diff=PREDICTION_WINDOW_PERIOD)
 
     data["VOL"] = X["Volume(BTC)"]
 
-    X = X.rename(columns={'open':'Open', 'high':'High', 'low':'Low', 'close':'Close'}) #until finta gets updated
-
+    X = X.rename(
+        columns={"open": "Open", "high": "High", "low": "Low", "close": "Close"}
+    )  # until finta gets updated
 
     data["Change%"] = (
         data["Change"] / X["Close"]
