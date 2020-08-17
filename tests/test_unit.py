@@ -26,7 +26,12 @@ for filename in os.listdir(os.path.join(rootdir(), "data")):
 
 
 def test_preprocess():
-
+    data = pd.DataFrame(columns=headers)
+    for filename in os.listdir(os.path.join(rootdir(), "data")):
+        data = pd.concat(
+            [data, pd.read_csv(os.path.join(rootdir(), "data", filename), index_col=False)]
+        )
+    
     X, y = palantir.preprocess(data)
 
     assert isinstance(X, pd.DataFrame)
