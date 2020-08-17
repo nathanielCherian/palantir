@@ -41,7 +41,7 @@ def backtest(fee=palantir.TRADING_FEE, cash=500):
 
     clfs = palantir.load_models()
     sim = Simulator(
-        palantir.load_data("dataset-btc-hourly")[:300]
+        palantir.load_data("dataset-btc-hourly")
         .astype(float)
         .drop(["Timestamp"], axis=1),
         BacktestPredictor(
@@ -68,6 +68,9 @@ def parse_args():
     parser.add_argument(
         "--version", "-v", action="version", version=f"palantir {VERSION}"
     )
+
+    help = "Initialize palantir in a folder"
+    parser.add_argument("--init", help=help, action="store_true")
 
     help = "Download historical data for bitcoin"
     parser.add_argument("--get-btc", help=help, action="store_true")
@@ -96,6 +99,11 @@ def main():
 
     elif args.backtest:
         backtest()
+
+    elif args.init:
+        initialize()
+    else:
+        structure_check()
 
     print(args)
     return "palantir test"
