@@ -73,7 +73,7 @@ def parse_args():
     parser.add_argument("--init", help=help, action="store_true")
 
     help = "Download historical data for bitcoin"
-    parser.add_argument("--get-btc", help=help, action="store_true")
+    parser.add_argument("--get-btc", help=help, action="store")
 
     help = "Test models on built-in simulator"
     parser.add_argument("--backtest", help=help, action="store_true")
