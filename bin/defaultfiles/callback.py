@@ -9,5 +9,3 @@ def callback(prediction: tuple):
     """
 
     return
-
-

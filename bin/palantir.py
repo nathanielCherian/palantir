@@ -5,6 +5,7 @@ from pathlib import Path
 from prompt_toolkit import prompt, PromptSession
 from prompt_toolkit.shortcuts import clear
 from prompt_toolkit.key_binding import KeyBindings
+import yaml
 
 import crawler
 import palantir
@@ -19,7 +20,9 @@ def rootdir():
 
 def structure_check():
 
-    required_files = ["palantir.txt", "callback.py", "config.json"]
+    required_files = ["palantir.txt", "callback.py", "config.yml"]
+
+    required_configs = ["name", "security"]
 
     needed_files = [file_ for file_ in required_files if not os.path.exists(file_)]
 
@@ -30,7 +33,16 @@ def structure_check():
         )
         print("Created ", file_)
 
+    with open("config.yml") as f:
+        data = yaml.load(f, Loader=yaml.FullLoader)
+        data = data if data else {}
+        not_in = [c for c in required_configs if c not in data.keys()]
+        if not_in:
+            print("Incorrect palantir config.yml ")
+            sys.exit(1)
+
     print("Palantir structure exists. Moving on...")
+    return data
 
 
 def initialize(path):
@@ -105,39 +117,52 @@ def main():
 
     elif args.init:
         initialize()
+
     else:
 
         clear()
         clear()
 
-
-        with open(os.path.join(rootdir(), 'defaultfiles', 'palantir.txt')) as f:
+        with open(os.path.join(rootdir(), "defaultfiles", "palantir.txt")) as f:
             logo = [line for line in f][:9]
-            print('\n\n', ''.join(logo))
-            print('\n                                           By Nathaniel Cherian\n')
-
-
-        structure_check()
+            print("\n\n", "".join(logo))
+            print("\n                                           By Nathaniel Cherian\n")
 
         session = PromptSession()
 
-        text = ['']
-        while text[0] != 'exit':
-            text = session.prompt('PALANTIR> ').split()
-            if len(text) is 0: text.append('') 
+        config_data = structure_check()
+        if config_data["name"]:
+            print(f"Loaded instance named '{config_data.get('name', 'unnamed')}'")
+        else:
+            print("\nEnter a name for this palantir instance")
+            text = session.prompt("PALANTIR> ")
+            config_data["name"] = text
 
+            with open("config.yml", "w") as f:
+                yaml.dump(config_data, f, default_flow_style=False)
+            print(f"Instance named {text}!\n")
 
-            if text[0] == 'help':
+        text = [""]
+        while text[0] != ("exit", "exit()"):
+            text = session.prompt("PALANTIR> ").split()
+            if len(text) is 0:
+                text.append("")
+
+            if text[0] == "help":
                 print("Commands: ")
-                print('collects historical hourly bitcoin data. usage: get-btc [directory:str] [days:int]')
-                print('Initialize palantir in a folder. usage: init [directory:str]')
+                print(
+                    "collects historical hourly bitcoin data. usage: get-btc [directory:str] [days:int]"
+                )
+                print("Initialize palantir in a folder. usage: init [directory:str]")
 
-            elif text[0] == 'get-btc':
-                
-                if len(text) < 3 or text[1] == 'help':
-                    print('collects historical hourly bitcoin data. usage: get-btc [directory:str] [days:int]')
+            elif text[0] == "get-btc":
+
+                if len(text) < 3 or text[1] == "help":
+                    print(
+                        "collects historical hourly bitcoin data. usage: get-btc [directory:str] [days:int]"
+                    )
                 else:
-                    print('collecting bitcoin data')
+                    print("collecting bitcoin data")
                     try:
                         crawler.get_btc(
                             text[1],
@@ -147,18 +172,22 @@ def main():
                             delay=0.001,
                         )
                     except:
-                        "Failed! Check your inputs!" 
+                        "Failed! Check your inputs!"
 
-            elif text[0] == 'init':
-                
-                if len(text) < 2 or text[1] == 'help':
-                    print('Initialize palantir in a folder. usage: init [directory:str]')
+            elif text[0] == "init":
+
+                if len(text) < 2 or text[1] == "help":
+                    print(
+                        "Initialize palantir in a folder. usage: init [data-directory:str]"
+                    )
                 else:
 
                     try:
                         initialize(text[1])
                     except:
-                        "Failed! Check your inputs!" 
-            
+                        "Failed! Check your inputs!"
+
+            else:
+                print("Command not found!")
 
     print(args)
