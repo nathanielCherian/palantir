@@ -1,4 +1,5 @@
 from datetime import timedelta, date
+from prompt_toolkit.shortcuts import ProgressBar
 from pathlib import Path
 import requests
 import ast
@@ -39,30 +40,34 @@ def get_btc(path, date1, date2, period="5-min", delay=3):
 
     Path(path).mkdir(parents=True, exist_ok=True)
 
-    for d in dates(date1, date2):
+    with ProgressBar() as pb:
+        # print(int((end - start).days))cl
+        for d in pb(dates(date1, date2), total=int((date2 - date1).days)):
 
-        date = d.strftime("%Y-%m-%d")
+            date = d.strftime("%Y-%m-%d")
 
-        r = requests.get(url2_1 + date + "&e=" + date + url2_2)
-        assert r.status_code == 200, "Page returned invalid response"
+            r = requests.get(url2_1 + date + "&e=" + date + url2_2)
+            assert r.status_code == 200, "Page returned invalid response"
 
-        data = ast.literal_eval(r.text)
-        assert len(data[0]) == 8, "Data was improperly parsed"
+            data = ast.literal_eval(r.text)
+            assert len(data[0]) == 8, "Data was improperly parsed"
 
-        headers = [
-            "Timestamp",
-            "Open",
-            "High",
-            "Low",
-            "Close",
-            "Volume(BTC)",
-            "Volume(Currency)",
-            "WeightedPrice",
-        ]
+            headers = [
+                "Timestamp",
+                "Open",
+                "High",
+                "Low",
+                "Close",
+                "Volume(BTC)",
+                "Volume(Currency)",
+                "WeightedPrice",
+            ]
 
-        with open(os.path.join(path, f"{date}.csv"), mode="w", newline="") as data_file:
-            writer = csv.writer(data_file)
-            writer.writerow(headers)
-            writer.writerows(data)
+            with open(
+                os.path.join(path, f"{date}.csv"), mode="w", newline=""
+            ) as data_file:
+                writer = csv.writer(data_file)
+                writer.writerow(headers)
+                writer.writerows(data)
 
-        time.sleep(delay)
+            time.sleep(delay)

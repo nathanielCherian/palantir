@@ -5,6 +5,8 @@ from pathlib import Path
 from prompt_toolkit import prompt, PromptSession
 from prompt_toolkit.shortcuts import clear
 from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.completion import WordCompleter, NestedCompleter
+from ast import literal_eval
 import yaml
 
 import crawler
@@ -51,12 +53,12 @@ def initialize(path):
     palantir.create_models(raw_data, verbose=1)
 
 
-def backtest(path, fee=palantir.TRADING_FEE, cash=500):
+def backtest(path, fee=palantir.TRADING_FEE, cash=500, bitcoin=1, save=None):
     print("backtesting models through palantir-simulation...\n")
 
     clfs = palantir.load_models()
     sim = Simulator(
-        palantir.load_data("dataset-btc-hourly")
+        palantir.load_data(path)
         .astype(float)
         .drop(["Timestamp"], axis=1),
         BacktestPredictor(
@@ -64,15 +66,16 @@ def backtest(path, fee=palantir.TRADING_FEE, cash=500):
         ),
         cash=cash,
         fee=fee,
+        bitcoin=bitcoin,
     )
-    print("\n\n", sim.play(), "\n")
+
+    sim.play()
 
     Path(palantir.COMPLETED_SIMULATIONS_PATH).mkdir(parents=True, exist_ok=True)
 
-    sim_file = os.path.join(
-        palantir.COMPLETED_SIMULATIONS_PATH,
-        datetime.now().strftime("%d-%H-%M-%S") + ".csv",
-    )
+    name = datetime.now().strftime("%d-%H-%M-%S") if not save else save
+    sim_file = os.path.join(palantir.COMPLETED_SIMULATIONS_PATH, name + ".csv",)
+
     sim.history.to_csv(sim_file)
     print(f"Simulation results saved to '{sim_file}'.\n")
 
@@ -128,6 +131,12 @@ def main():
             print("\n\n", "".join(logo))
             print("\n                                           By Nathaniel Cherian\n")
 
+        dir_files = {f.name for f in os.scandir(os.getcwd()) if f.is_dir()}
+
+        completer = NestedCompleter.from_nested_dict(
+            {"get-btc": None, "init": dir_files, "backtest": dir_files,}
+        )
+
         session = PromptSession()
 
         config_data = structure_check()
@@ -143,10 +152,21 @@ def main():
             print(f"Instance named {text}!\n")
 
         text = [""]
-        while text[0] != ("exit", "exit()"):
-            text = session.prompt("PALANTIR> ").split()
+        while text[0] not in ["exit", "exit()"]:
+            text = session.prompt("PALANTIR> ", completer=completer).split()
             if len(text) is 0:
                 text.append("")
+
+            kwargs = (
+                {}
+            )  # I will soon implement a regex based solution for literal kwarg evals
+            for i, t in enumerate(text):
+                index = t.find("=")
+
+                if t == "=":
+                    kwargs[text[i - 1]] = literal_eval(text[i + 1])
+                elif index is not -1:
+                    kwargs[t[:index]] = literal_eval(t[index + 1 :])
 
             if text[0] == "help":
                 print("Commands: ")
@@ -157,20 +177,22 @@ def main():
 
             elif text[0] == "get-btc":
 
-                if len(text) < 3 or text[1] == "help":
+                if len(text) < 2 or text[1] == "help":
                     print(
-                        "collects historical hourly bitcoin data. usage: get-btc [directory:str] [days:int]"
+                        "collects historical hourly bitcoin data. usage: get-btc *[directory:str] **[days:int]"
                     )
+
                 else:
                     print("collecting bitcoin data")
                     try:
                         crawler.get_btc(
                             text[1],
-                            date.today() - timedelta(days=int(text[2])),
+                            date.today() - timedelta(days=int(kwargs.get("days", 50))),
                             date.today(),
-                            period="Hourly",
+                            period=kwargs.get("period", "Hourly"),
                             delay=0.001,
                         )
+
                     except:
                         "Failed! Check your inputs!"
 
@@ -187,6 +209,24 @@ def main():
                     except:
                         "Failed! Check your inputs!"
 
+            elif text[0] == "backtest":
+
+                if len(text) < 2 or text[1] == "help":
+                    print(
+                        "Backtest model with historical data. usage: backtest [data-directory:str] [sim-results-filename:str]"
+                    )
+
+                else:
+
+                    try:
+                        backtest(text[1], **kwargs)
+                    except:
+                        "Failed! Check your inputs!"
+
+            elif text[0] in ["exit", "exit()"]:
+                break
+            elif text[0] in ["cls", "clear"]:
+                clear()
             else:
                 print("Command not found!")
 

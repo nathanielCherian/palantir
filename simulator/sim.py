@@ -107,9 +107,7 @@ class Simulator:
 
             self.history = self.history.append(info, ignore_index=True)
 
-            printProgressBar(
-                time + 1, data_length, prefix="progress:", suffix="complete"
-            )
+            printProgressBar(time + 1, data_length, prefix="progress:")
 
         return self.history
 
