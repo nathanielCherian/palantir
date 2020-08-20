@@ -29,6 +29,6 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires= get_requirements(),
     entry_points = {
-        'console_scripts': ['palantir=bin.palantir:main'],
+        'console_scripts': ['palantir=cli.palantir:main'],
     }
 )
