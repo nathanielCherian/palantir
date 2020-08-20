@@ -230,4 +230,4 @@ def main():
             else:
                 print("Command not found!")
 
-    print(args)
+    #print(args)
