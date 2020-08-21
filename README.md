@@ -19,7 +19,7 @@ The preceding chart shows a simulation of a model trained on data from 2020-06-0
 
 ## Installation
 
-```pip install palantir-fc```
+```pip install palantir-cli```
 
 or for the latest dev version...
 

@@ -58,9 +58,7 @@ def backtest(path, fee=palantir.TRADING_FEE, cash=500, bitcoin=1, save=None):
 
     clfs = palantir.load_models()
     sim = Simulator(
-        palantir.load_data(path)
-        .astype(float)
-        .drop(["Timestamp"], axis=1),
+        palantir.load_data(path).astype(float).drop(["Timestamp"], axis=1),
         BacktestPredictor(
             preceding=palantir.MINIMUM_DATA, time=palantir.MINIMUM_DATA - 1, clfs=clfs
         ),
@@ -134,7 +132,13 @@ def main():
         dir_files = {f.name for f in os.scandir(os.getcwd()) if f.is_dir()}
 
         completer = NestedCompleter.from_nested_dict(
-            {"get-btc": None, "init": dir_files, "backtest": dir_files,}
+            {
+                "get-btc": None,
+                "init": dir_files,
+                "backtest": dir_files,
+                "rename": None,
+                "callback": None,
+            }
         )
 
         session = PromptSession()
@@ -200,7 +204,7 @@ def main():
 
                 if len(text) < 2 or text[1] == "help":
                     print(
-                        "Initialize palantir in a folder. usage: init [data-directory:str]"
+                        "Initialize palantir in a folder. usage: init *[data-directory:str]"
                     )
                 else:
 
@@ -213,7 +217,7 @@ def main():
 
                 if len(text) < 2 or text[1] == "help":
                     print(
-                        "Backtest model with historical data. usage: backtest [data-directory:str] [sim-results-filename:str]"
+                        "Backtest model with historical data. usage: backtest *[data-directory:str] **[sim-results-filename:str]"
                     )
 
                 else:
@@ -223,11 +227,35 @@ def main():
                     except:
                         "Failed! Check your inputs!"
 
+            elif text[0] == "rename":
+
+                if len(text) < 2:
+                    print("Rename palantir instance. usage: rename *[new_name:str]")
+
+                else:
+
+                    config_data["name"] = text[1]
+                    with open("config.yml", "w") as f:
+                        yaml.dump(config_data, f, default_flow_style=False)
+                        print(f"Instance renamed {text[1]}!")
+
+            elif text[0] == "callback":
+
+                with open("callback.py", "r") as f:
+                    s = f.read()
+
+                dd = {}
+                exec(s, dd)
+                print(dd["callback"]((1, 2)))
+
             elif text[0] in ["exit", "exit()"]:
                 break
             elif text[0] in ["cls", "clear"]:
                 clear()
+
+            elif not text[0]:
+                pass
             else:
                 print("Command not found!")
 
-    #print(args)
+    # print(args)

@@ -10,11 +10,11 @@ def get_requirements():
     return req
 
 setuptools.setup(
-    name="palantir",
-    version="0.0.1",
+    name="palantir-cli",
+    version="0.0.2",
     author="Nathaniel Cherian",
     author_email="nathaniel@sylica.com",
-    description="bitcoin forecaster",
+    description="security analyzer and predictor",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/nathanielCherian/palantir",
