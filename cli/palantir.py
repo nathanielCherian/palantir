@@ -158,7 +158,7 @@ def main():
         text = [""]
         while text[0] not in ["exit", "exit()"]:
             text = session.prompt("PALANTIR> ", completer=completer).split()
-            if len(text) is 0:
+            if len(text) == 0:
                 text.append("")
 
             kwargs = (
@@ -169,7 +169,7 @@ def main():
 
                 if t == "=":
                     kwargs[text[i - 1]] = literal_eval(text[i + 1])
-                elif index is not -1:
+                elif index != -1:
                     kwargs[t[:index]] = literal_eval(t[index + 1 :])
 
             if text[0] == "help":
@@ -241,12 +241,17 @@ def main():
 
             elif text[0] == "callback":
 
+                print("testing live data callbacks")
+                """
                 with open("callback.py", "r") as f:
                     s = f.read()
 
                 dd = {}
                 exec(s, dd)
-                print(dd["callback"]((1, 2)))
+                print(dd["callback"]((1, 2))) """
+            
+            elif text[0] == "version":
+                print("palantir-cli " ,VERSION)
 
             elif text[0] in ["exit", "exit()"]:
                 break

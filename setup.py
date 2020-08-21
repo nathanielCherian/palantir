@@ -11,14 +11,14 @@ def get_requirements():
 
 setuptools.setup(
     name="palantir-cli",
-    version="0.0.2",
+    version="0.0.1",
     author="Nathaniel Cherian",
     author_email="nathaniel@sylica.com",
     description="security analyzer and predictor",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/nathanielCherian/palantir",
-    packages=setuptools.find_packages(exclude=("tests",)),
+    packages=setuptools.find_packages(exclude=("tests", "cli")),
     classifiers=[
         "Programming Language :: Python :: 3",
         'Development Status :: 3 - Alpha',
@@ -32,4 +32,7 @@ setuptools.setup(
         'console_scripts': ['palantir=cli.palantir:main'],
     },
     include_package_data=True,
+    keywords="""bitcoin stocks securities
+                autocorrelation forecast prediction
+                cli curses trade""".split(),
 )

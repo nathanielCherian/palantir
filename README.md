@@ -1,11 +1,12 @@
 # ![](docs/media/logo.svg)
 
+[![PyPI version](https://badge.fury.io/py/palantir-cli.svg)](https://badge.fury.io/py/palantir-cli)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Build Status](https://travis-ci.org/nathanielCherian/palantir.svg?branch=master)](https://travis-ci.org/nathanielCherian/palantir)
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
 
-The Palantir Project is an attempt to aggregate and take advantage of the patterns of tradable assets. As if now Palantir has been optimized soley for bitcoin (for its high volatility) but will soon expand into all aspects of trade. 
+The Palantir Project is an attempt to aggregate and take advantage of the patterns of tradable assets in the context of [auto-correlation](https://en.wikipedia.org/wiki/Autocorrelation). Palantir exploits the [efficiency](https://en.wikipedia.org/wiki/Efficient-market_hypothesis) of the market in the market to try make a long or short prediction As if now Palantir has been optimized soley for bitcoin (for its high volatility) but will soon expand into all aspects of trade. 
 
 ## Background
 
@@ -32,16 +33,36 @@ Palantir's CLI interface can be activated from terminal with
 
 ```$ palantir```
 
-palantir also comes with two additional packages releasing you from the grasp of dependencies these include a data-scraper and a simulator.
+Palantir will look for special identification files in the current directory before it loads the software. If these files do not exist or are not correct palantir will create them.
+
+![](docs/media/cli.png)
+
+### Quick commands (within palantir)
+
+Arguments with a * are positional required args while ones with ** are optional
+and must be entered in the form ```foo=bar```. (similar to *args and **kwargs in python)
+
+``` 
+PALANTIR> help
+PALANTIR> get-btc *[directory:str] **[days:50]
+PALANTIR> init *[data-directory:str]
+PALANTIR> backtest *[data-directory:str] **[save:str] **[fee:0.001] **[cash:400] **[bitcoin:1]
+
+PALANTIR> rename *[new_name:str]
+PALANTIR> exit
+PALANTIR> clear
+```
 
 
-## Problems
+## Issues
 
 Palantir is still a WORK IN PROGRESS and will need more work before it has become a useful tool
 
-* Bitcoin trading fees: After applying the maximum fee (.30% per transaction) to trades the basic machine suffers greatly. To counteract this we have to find the equilibrium between minimizing trades and maximizing profits. Note: This will not be a problem in the palantir-stocks
+* ~~Bitcoin trading fees: After applying the maximum fee (.30% per transaction) to trades the basic machine suffers greatly. To counteract this we have to find the equilibrium between minimizing trades and maximizing profits. Note: This will not be a problem in the palantir-stocks~~
 
 * Need to work on the CLI 
+
+Please report any issues [here](https://github.com/nathanielCherian/palantir/issues). Thanks!
 
 ## Contributing
 
