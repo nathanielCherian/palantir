@@ -1,4 +1,4 @@
-# ![](docs/media/logo.svg)
+# ![](https://raw.githubusercontent.com/nathanielCherian/palantir/master/docs/media/logo.svg)
 
 [![PyPI version](https://badge.fury.io/py/palantir-cli.svg)](https://badge.fury.io/py/palantir-cli)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -13,7 +13,7 @@ The Palantir Project is an attempt to aggregate and take advantage of the patter
 At it's core palantir combines techinal indicators from different time periods and settings to form predictions about markets in the near-future. Then the optimal decisions are made to maximize profit. 
 
 
-![](docs/media/classifier-sim-train.png)
+![](https://raw.githubusercontent.com/nathanielCherian/palantir/master/docs/media/classifier-sim-train.png)
 
 The preceding chart shows a simulation of a model trained on data from 2020-06-01 to 2020-06-20 and actively playing on unseen data from 2020-06-21 to 2020-06-30 with 1 bitcoin and 200USD. Based on it's predictions palantir shorts or holds to maintain constant profit-growth.
 
@@ -35,7 +35,7 @@ Palantir's CLI interface can be activated from terminal with
 
 Palantir will look for special identification files in the current directory before it loads the software. If these files do not exist or are not correct palantir will create them.
 
-![](docs/media/cli.png)
+![](https://raw.githubusercontent.com/nathanielCherian/palantir/master/docs/media/cli.png)
 
 ### Quick commands (within palantir)
 

@@ -13,7 +13,7 @@ import crawler
 import palantir
 from simulator import Simulator, BacktestPredictor
 
-VERSION = "0.0.1"
+VERSION = "0.1.0"
 
 
 def rootdir():
@@ -22,7 +22,7 @@ def rootdir():
 
 def structure_check():
 
-    required_files = ["palantir.txt", "callback.py", "config.yml"]
+    required_files = ["palantir", "callback.py", "config.yml"]
 
     required_configs = ["name", "security"]
 
@@ -48,17 +48,21 @@ def structure_check():
 
 
 def initialize(path):
-    if os.path.exists(path):
-        print("Creating and training models...")
+    assert os.path.exists(path), print("Path does not exist!")
 
-        raw_data = palantir.load_data(path)
-        palantir.create_models(raw_data, verbose=1)
-        
-    else:
-        print("Path does not exist!")
+    print("Creating and training models...")
+
+    raw_data = palantir.load_data(path)
+    assert len(raw_data) > 200, print("Skipping. Dataset is too small.")
+    palantir.create_models(raw_data, verbose=1)
+
+
 
 
 def backtest(path, fee=palantir.TRADING_FEE, cash=500, bitcoin=1, save=None):
+
+    assert os.path.exists(path), print("Path does not exist!")
+
     print("backtesting models through palantir-simulation...\n")
 
     clfs = palantir.load_models()
@@ -129,22 +133,13 @@ def main():
         clear()
         clear()
 
-        with open(os.path.join(rootdir(), "defaultfiles", "palantir.txt")) as f:
+
+        with open(os.path.join(rootdir(), "defaultfiles", "palantir")) as f:
             logo = [line for line in f][:9]
             print("\n\n", "".join(logo))
             print("\n                                           By Nathaniel Cherian\n")
 
-        dir_files = {f.name for f in os.scandir(os.getcwd()) if f.is_dir()}
 
-        completer = NestedCompleter.from_nested_dict(
-            {
-                "get-btc": None,
-                "init": dir_files,
-                "backtest": dir_files,
-                "rename": None,
-                "callback": None,
-            }
-        )
 
         session = PromptSession()
 
@@ -162,7 +157,20 @@ def main():
 
         text = [""]
         while text[0] not in ["exit", "exit()"]:
-            text = session.prompt("PALANTIR> ", completer=completer).split()
+
+            dir_files = {f.name for f in os.scandir(os.getcwd()) if f.is_dir()}
+
+            completer = NestedCompleter.from_nested_dict(
+                {
+                    "get-btc": None,
+                    "init": dir_files,
+                    "backtest": dir_files,
+                    "rename": None,
+                    "callback": None,
+                }
+            )
+
+            text = session.prompt("PALANTIR> ", completer=completer, complete_in_thread=True).split()
             if len(text) == 0:
                 text.append("")
 
