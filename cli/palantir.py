@@ -48,9 +48,14 @@ def structure_check():
 
 
 def initialize(path):
-    print("Creating and training models...")
-    raw_data = palantir.load_data(path)
-    palantir.create_models(raw_data, verbose=1)
+    if os.path.exists(path):
+        print("Creating and training models...")
+
+        raw_data = palantir.load_data(path)
+        palantir.create_models(raw_data, verbose=1)
+        
+    else:
+        print("Path does not exist!")
 
 
 def backtest(path, fee=palantir.TRADING_FEE, cash=500, bitcoin=1, save=None):
