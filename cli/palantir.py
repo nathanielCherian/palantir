@@ -22,7 +22,7 @@ def rootdir():
 
 def structure_check():
 
-    required_files = ["palantir.txt", "callback.py", "config.yml"]
+    required_files = ["palantir", "callback.py", "config.yml"]
 
     required_configs = ["name", "security"]
 
@@ -124,7 +124,7 @@ def main():
         clear()
         clear()
 
-        with open(os.path.join(rootdir(), "defaultfiles", "palantir.txt")) as f:
+        with open(os.path.join(rootdir(), "defaultfiles", "palantir")) as f:
             logo = [line for line in f][:9]
             print("\n\n", "".join(logo))
             print("\n                                           By Nathaniel Cherian\n")
@@ -197,6 +197,8 @@ def main():
                             delay=0.001,
                         )
 
+                        crawler.clean(text[1])
+
                     except:
                         "Failed! Check your inputs!"
 
@@ -241,14 +243,12 @@ def main():
 
             elif text[0] == "callback":
 
-                print("testing live data callbacks")
-                """
                 with open("callback.py", "r") as f:
                     s = f.read()
 
                 dd = {}
                 exec(s, dd)
-                print(dd["callback"]((1, 2))) """
+                print(dd["callback"]((1, 2)))
             
             elif text[0] == "version":
                 print("palantir-cli " ,VERSION)

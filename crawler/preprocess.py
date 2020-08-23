@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 
-def clean(path):
+def clean(path, verbose=0):
 
     headers = [
         "Timestamp",
@@ -29,6 +29,8 @@ def clean(path):
                 writer.writerow(headers)
                 writer.writerows(data)
 
-            print("replaced in ", filename)
 
-    print("Done!")
+            if verbose > 0:
+                print("replaced in ", filename)
+    if verbose > 0:
+        print("Done!")
