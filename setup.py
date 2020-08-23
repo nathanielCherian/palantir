@@ -11,7 +11,7 @@ def get_requirements():
 
 setuptools.setup(
     name="palantir-cli",
-    version="0.0.1",
+    version="0.1.0",
     author="Nathaniel Cherian",
     author_email="nathaniel@sylica.com",
     description="security analyzer and predictor",
