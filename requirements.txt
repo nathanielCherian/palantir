@@ -5,3 +5,4 @@ finta
 prompt-toolkit
 pyyaml
 requests
+schedule

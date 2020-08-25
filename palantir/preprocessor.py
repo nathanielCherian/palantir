@@ -30,7 +30,7 @@ def preprocess(X: pd.DataFrame, validation=False, diff=PREDICTION_WINDOW_PERIOD)
     data["RSI"] = TA.RSI(X, period=14)
     data["MOM"] = TA.MOM(X)
 
-    data["VOL"] = X["Volume(BTC)"]
+    #data["VOL"] = X["Volume(BTC)"]
 
     X = X.rename(
         columns={"open": "Open", "high": "High", "low": "Low", "close": "Close"}

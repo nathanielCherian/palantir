@@ -1,7 +1,6 @@
 import os, sys, json, shutil
 import argparse
 from datetime import date, timedelta, datetime
-import dateutil.parser as dp
 from pathlib import Path
 from prompt_toolkit import prompt, PromptSession
 from prompt_toolkit.shortcuts import clear
@@ -10,10 +9,11 @@ from prompt_toolkit.completion import WordCompleter, NestedCompleter
 from ast import literal_eval
 import yaml
 import requests
-import time
 import crawler
 import palantir
 from simulator import Simulator, BacktestPredictor
+import schedule
+import pandas as pd
 
 VERSION = "0.1.0"
 
@@ -168,7 +168,7 @@ def main():
                     "backtest": dir_files,
                     "rename": None,
                     "callback": None,
-                    "btc-live":None,
+                    "live-btc":None,
                 }
             )
 
@@ -257,35 +257,45 @@ def main():
                         print(f"Instance renamed {text[1]}!")
 
 
-            elif text[0] == 'btc-live':
+            elif text[0] == 'live-btc':
                 print("You are now starting live predictions using the palantir instance of ", config_data['name'])
 
+                """
+                Part 1: Collect preceding data to create processed data
+                Part 2: Get new datapoint from api
 
-                print("collecting necessary data...")
-                crawler.get_btc(
-                    "livedata",
-                    date.today() - timedelta(days=int(kwargs.get("days", 9))),
-                    date.today(),
-                    period=kwargs.get("period", "Hourly"),
-                    delay=0.001,
-                )
-                crawler.clean("livedata", verbose=0)
+                """
 
-                with open("config.yml", "w") as f:
-                    config_data["last-update"] = "now"
-                    yaml.dump(config_data, f, default_flow_style=False)
+                if kwargs.get('skip1', None):
+
+                    print("collecting necessary data...")
+                    crawler.get_btc(
+                        "livedata",
+                        date.today() - timedelta(days=int(9)),
+                        date.today() + timedelta(days=3),
+                        period="Hourly",
+                        delay=0.001,
+                    )
+                    crawler.clean("livedata", verbose=0)
+
+                    with open("config.yml", "w") as f:
+                        config_data["last-update"] = "now"
+                        yaml.dump(config_data, f, default_flow_style=False)
                 
 
-                r = requests.get("https://api.coindesk.com/v1/bpi/currentprice.json") 
-                data = r.json()
 
-                api_time = dp.parse(data['time']['updatedISO'])
-                unix_time = time.mktime(api_time.timetuple())
+                # Get user-defined functions
+                with open("callback.py", "r") as f:
+                    s = f.read()
+                callbacks = {}
+                exec(s, callbacks)
+                live_data = callbacks["security_api"]()
+                
+                pd.DataFrame({"Open":live_data["price"]})
 
-                price = data['bpi']['USD']['rate_float']
+                pre_data = palantir.load_data('livedata').reset_index(drop=True)
 
-                print(unix_time)
-                print(price)
+
 
 
             elif text[0] == "callback":
